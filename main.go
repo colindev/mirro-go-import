@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -26,6 +27,7 @@ func main() {
 	router := httprouter.New()
 
 	router.GET("/:projectID/:repo", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		log.Println(r.URL.String())
 		projectID := p.ByName("projectID")
 		repo := p.ByName("repo")
 		w.Write([]byte(fmt.Sprintf(
