@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -24,12 +24,15 @@ func main() {
 
 	flag.Parse()
 
-	router := httprouter.New()
+	router := mux.NewRouter()
 
-	router.GET("/:projectID/:repo", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	router.HandleFunc("/{projectID}/{repo:.*}", func(w http.ResponseWriter, r *http.Request) {
 		log.Println(r.URL.String())
-		projectID := p.ByName("projectID")
-		repo := p.ByName("repo")
+		vars := mux.Vars(r)
+		projectID := vars["projectID"]
+		repo := vars["repo"]
+
+		log.Println(projectID, repo)
 		w.Write([]byte(fmt.Sprintf(
 			metaTemp,
 			domain,
@@ -38,6 +41,9 @@ func main() {
 			projectID,
 			repo,
 		)))
-	})
+	}).Methods("GET")
+
+	log.Println("listen on:", addr)
+	log.Println("mirro:", domain)
 	http.ListenAndServe(addr, router)
 }

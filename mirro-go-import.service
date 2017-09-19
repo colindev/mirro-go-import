@@ -1,0 +1,18 @@
+[Unit]
+Description=morro golang import (power by golang)
+After=network.target
+
+[Service]
+Type=simple
+User=colin
+Group=colin
+ExecStart=/home/colin/mirro-go-import/server -addr :8000 -domain git.colindev.io
+ExecStop=/bin/kill -s QUIT $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+
+Restart=always
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target
+
